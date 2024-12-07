@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Calculator</title>
+</head>
+
+<body>
+    <h1>Calculator</h1>
+
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
+            <a class="close" href="{% url 'calculator' %}" data-dismiss="alert">×</a>
+        </div>
+    {% endfor %}
+    {% endif %}
+    <br>
+
+    <form method="get">
+
+        <div class="input-group w-100">
+            <div class="input-group-append">
+                <select name="hint_filter" class="form-control" required>
+                    <option value="{{hint_filter}}" selected disabled hidden>Choose here</option>
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                    <option value="*">*</option>
+                    <option value="/">/</option>
+                </select>
+                <button class="btn btn-primary" type="submit">
+                    filter
+                </button>
+                <br>
+            </div>
+        </div>
+    </form>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="input-group w-100">
+            <div class="input-group-append">
+
+                <input type='number' name="value1" value="{{action_obj.value_1}}" type="text" class="form-control" required>
+    
+                <select name="hint" class="form-control" required>
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                    <option value="/">/</option>
+                    <option value="*">*</option>
+                </select>
+    
+                <input type='number' name="value2" value="{{action_obj.value_2}}" type="text" class="form-control">
+    
+                <label name="variable">
+                    = {{ action_obj.outout }}
+                </label>
+
+                <br>
+                <br>
+                <button class="btn btn-primary" type="submit">
+                    yuborish
+                </button>
+            </div>
+        </div>
+    </form>
+    <form>
+        <h1>History</h1>
+        {% for action in actions %}
+            <label>
+                {{ action.value_1 }} {{ action.hint }} {{ action.value_2 }} =  {{ action.outout }}
+             </label>
+            <br>
+
+        {% endfor %}
+    </form>
+</body>
+
+</html>
+
