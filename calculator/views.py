@@ -1,36 +1,28 @@
 from django.shortcuts import render
 from .models import Calculator, Math_hints
+from .forms import HintFilterForm, ActionFrom
 
 # Create your views here.
 
 def calculator(request):
     actions = Calculator.objects.exclude(hint=Math_hints.BULISH, value_2=0.0)
+    form = HintFilterForm()
+    if request.method == "GET":
+        form = HintFilterForm(data=request.GET)
+        if form.is_valid():
+            actions = form.save()
 
-    hint_filter = request.GET.get("hint_filter", "")
-
+    action_form = ActionFrom()
+    action_obj = ''
     if request.method == 'POST':
-        value1 = request.POST.get("value1", "")
-        value2 = request.POST.get("value2", "")
-        hint = request.POST.get("hint", "+")
-
-        action_obj = Calculator.objects.create(
-            value_1 = value1,
-            value_2 = value2,
-            hint = hint
-        )
-
-
-        context = {
-            'actions':actions,
-            "action_obj": action_obj
-            }
-        return render(request, 'calculator.html', context) #redirect
-    
-    if hint_filter:
-        actions = actions.filter(hint = hint_filter)
+        action_form = ActionFrom(data=request.POST)
+        if action_form.is_valid():
+            action_obj = action_form.save() #redirect
         
     context = {
+        'form':form,
+        'action_form':action_form,
         'actions':actions,
-        'hint_filter':hint_filter
+        'action_obj':action_obj,
         }
     return render(request, 'calculator.html', context)

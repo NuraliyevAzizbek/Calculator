@@ -1,80 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Calculator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #f8f9fa;
+            padding-top: 50px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .form-container {
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #343a40;
+        }
+        .alert {
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Calculator</h1>
 
+<div class="container">
+    <h1 class="text-center mb-4">Calculator</h1>
+
+    <!-- Display messages -->
     {% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-success">
-            {{ message }}
-            <a class="close" href="{% url 'calculator' %}" data-dismiss="alert">×</a>
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Filter Form -->
+    <form method="get" class="form-container">
+        <div class="form-group">
+            <label for="{{ form.hint.id_for_label }}">Select Hint:</label>
+            {{ form.hint }}
+        </div>
+
+        <button class="btn btn-primary" type="submit">Filter</button>
+    </form>
+
+    <!-- Action Form -->
+    <form method="post" class="form-container">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ action_form.as_p }}
+        </div>
+
+        <label class="d-block mt-3">= {{ action_obj.outout }}</label>
+
+        <button class="btn btn-primary" type="submit">Yuborish</button>
+    </form>
+
+    <!-- History Section -->
+    <h2 class="mt-5">History</h2>
+    {% for action in actions %}
+        <div class="alert alert-info">
+            <label>
+                {{ action.value_1 }} {{ action.hint }} {{ action.value_2 }} = {{ action.outout }}
+            </label>
         </div>
     {% endfor %}
-    {% endif %}
-    <br>
+</div>
 
-    <form method="get">
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-        <div class="input-group w-100">
-            <div class="input-group-append">
-                <select name="hint_filter" class="form-control" required>
-                    <option value="{{hint_filter}}" selected disabled hidden>Choose here</option>
-                    <option value="+">+</option>
-                    <option value="-">-</option>
-                    <option value="*">*</option>
-                    <option value="/">/</option>
-                </select>
-                <button class="btn btn-primary" type="submit">
-                    filter
-                </button>
-                <br>
-            </div>
-        </div>
-    </form>
-
-    <form method="post">
-        {% csrf_token %}
-        <div class="input-group w-100">
-            <div class="input-group-append">
-
-                <input type='number' name="value1" value="{{action_obj.value_1}}" type="text" class="form-control" required>
-    
-                <select name="hint" class="form-control" required>
-                    <option value="+">+</option>
-                    <option value="-">-</option>
-                    <option value="/">/</option>
-                    <option value="*">*</option>
-                </select>
-    
-                <input type='number' name="value2" value="{{action_obj.value_2}}" type="text" class="form-control">
-    
-                <label name="variable">
-                    = {{ action_obj.outout }}
-                </label>
-
-                <br>
-                <br>
-                <button class="btn btn-primary" type="submit">
-                    yuborish
-                </button>
-            </div>
-        </div>
-    </form>
-    <form>
-        <h1>History</h1>
-        {% for action in actions %}
-            <label>
-                {{ action.value_1 }} {{ action.hint }} {{ action.value_2 }} =  {{ action.outout }}
-             </label>
-            <br>
-
-        {% endfor %}
-    </form>
 </body>
-
 </html>
-
